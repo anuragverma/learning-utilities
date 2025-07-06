@@ -1,0 +1,92 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #eaf4fc;
+  color: #333;
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
+  background: #fff;
+  border: 3px solid #1e90ff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #aaa;
+}
+
+input,
+select,
+button {
+  margin: 5px;
+  font-size: 1.4em;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  padding: 10px;
+}
+
+select,
+#customNumbers,
+#timePerQuestion {
+  width: 220px;
+}
+
+button {
+  background-color: #1e90ff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #187bcd;
+}
+
+#feedback {
+  font-size: 1.2em;
+  margin: 10px;
+  min-height: 30px;
+}
+
+#timer {
+  font-size: 1.2em;
+  margin: 10px;
+  color: #c62828;
+}
+
+#config,
+#inputDiv,
+#clock,
+#timer,
+#feedback,
+#score,
+#mcqDiv {
+  display: none;
+}
+
+#config fieldset {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px auto;
+  width: fit-content;
+  background: #fff;
+}
+
+.mcq-option {
+  display: inline-block;
+  margin: 8px;
+  padding: 12px 18px;
+  border: 2px solid #1e90ff;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.mcq-option:hover {
+  background: #e0f0ff;
+}

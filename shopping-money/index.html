@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Money Handling Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container" id="home-screen">
+    <h1>🛍 Money Handling Game</h1>
+    <p>Learn how to handle money like a pro! Choose your level and start your journey to become a shopkeeping master.
+    </p>
+
+    <h2>🎯 Choose Your Level</h2>
+    <form id="mode-form">
+      <label><input type="radio" name="mode" value="starter" checked /> 🔵 Change Starter – Pocket Change Hero</label><br />
+      <label><input type="radio" name="mode" value="explorer" /> 🟢 Money Explorer – Smart Shopper</label><br />
+      <label><input type="radio" name="mode" value="master" /> 🟡 Money Master – Cash Champion</label><br />
+      <label><input type="radio" name="mode" value="shopkeeper" /> 🔴 Shopkeeper Pro – Star Shopkeeper</label>
+    </form>
+
+    <h2>📘 How to Play</h2>
+    <ul>
+      <li>See which items were bought (with quantity)</li>
+      <li>Calculate the total (if required)</li>
+      <li>Click coins/notes to pay</li>
+      <li>Give exact or extra money based on the mode</li>
+      <li>Get feedback and move to the next question</li>
+    </ul>
+
+    <div class="start-wrapper">
+      <button onclick="startGame()">▶️ Start Game</button>
+    </div>
+  </div>
+
+  <div class="container" id="game-screen" style="display: none;">
+    <div class="top-bar">
+      <div id="instructions"></div>
+      <div id="scoreboard">
+        ✅ Correct: <span id="score-correct">0</span><br />
+        ❌ Incorrect: <span id="score-wrong">0</span>
+      </div>
+      <div id="help-icon" onclick="showHelp()">❓</div>
+    </div>
+
+    <div id="product-list"></div>
+
+    <div id="total-question">
+      <label>Total cost: </label>
+      <input type="number" id="total-input" placeholder="₹ ?" />
+    </div>
+
+    <h3>Click notes/coins to pay:</h3>
+    <div id="wallet"></div>
+
+    <div id="given-display">
+      <strong>Given to shopkeeper: ₹<span id="given-amount">0</span></strong>
+      <div id="given-notes"></div>
+    </div>
+
+    <div id="change-question" style="display: none;">
+      <div id="shopkeeper-given" style="margin-bottom: 10px;"></div>
+      <label id="change-label">How much should the shopkeeper return?</label>
+      <input type="number" id="change-input" placeholder="₹ ?" />
+      <div id="return-selection" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="actions">
+      <button onclick="submitAnswer()">✅ Submit</button>
+      <button onclick="resetRound()">🔁 Reset</button>
+    </div>
+
+    <div id="feedback"></div>
+
+    <div id="next-timer" style="display: none;">
+      ⏳ Next question in <span id="timer-count">5</span> seconds...
+      <button onclick="skipTimer()">⏭ Skip</button>
+      <button onclick="stopTimer()" id="pause-button">Stop Timer</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="help-popup">
+    <div class="popup">
+      <h2>📘 How to Play</h2>
+      <p>Calculate total (if required), click coins/notes to pay. If change is needed, calculate and select the correct
+        return denominations.</p>
+      <button onclick="closeHelp()">Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

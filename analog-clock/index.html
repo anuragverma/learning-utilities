@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Analog Watch Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1 style="color:#1e90ff">Analog Watch Game</h1>
+
+  <div id="config">
+    <fieldset
+      style="border:1px solid #ccc; border-radius:8px; padding:10px; margin:10px auto; width:fit-content; background:#fff;">
+      <legend><strong>Question Formats</strong></legend>
+      <label><input type="checkbox" id="includeTo" checked> Include "x minutes to y o'clock"</label><br>
+      <label><input type="checkbox" id="includeQto" checked> Include "quarter to x"</label><br>
+      <label><input type="checkbox" id="includeQpast" checked> Include "quarter past x"</label><br>
+      <label><input type="checkbox" id="includeHalf" checked> Include "half past x"</label><br>
+    </fieldset>
+    <label>Show Numbers:
+      <select id="numberStyle" onchange="toggleCustomNumbers()">
+        <option value="none" selected>None</option>
+        <option value="only12">Only 12</option>
+        <option value="12-6">12 and 6</option>
+        <option value="12-3-6-9">12-3-6-9</option>
+        <option value="all">All Numbers</option>
+        <option value="custom">Custom</option>
+      </select>
+    </label>
+    <input id="customNumbers" placeholder="e.g. 1, 4, 7, 10" style="display:none;"><br>
+
+    <label>Seconds per question:
+      <input id="timePerQuestion" type="number" value="15" min="5" max="60">
+    </label><br>
+
+    <button onclick="startTest()">Start Test</button>
+  </div>
+
+  <canvas id="clock" width="300" height="300"></canvas><br>
+
+  <div id="inputDiv">
+    <label>Hour: <input type="number" id="hourInput" min="1" max="12"></label>
+    <label>Minute: <input type="number" id="minuteInput" min="0" max="59"></label>
+    <button onclick="submitAnswer()">Submit</button>
+  </div>
+
+  <div id="mcqDiv"></div>
+
+  <div id="timer">Time left: <span id="timeLeft">15</span> seconds</div>
+  <div id="feedback"></div>
+  <div id="score"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
