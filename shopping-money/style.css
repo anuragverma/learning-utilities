@@ -9,10 +9,11 @@ body {
   max-width: 700px;
   background: white;
   padding: 25px;
-  margin: auto;
+  margin: 20px auto;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.6s ease-in-out;
+  box-sizing: border-box;
 }
 
 h1,
@@ -155,5 +156,103 @@ input {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Responsive container */
+.container {
+  max-width: 700px;
+  background: white;
+  padding: 25px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease-in-out;
+  box-sizing: border-box;
+}
+
+/* Make text and buttons scale on small screens */
+body,
+input,
+button,
+label {
+  font-size: 1em;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px 2vw;
+    margin: 8px 0;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: 100vw;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.2em;
+    margin-bottom: 6px;
+  }
+
+  #pay-section h3,
+  .actions button,
+  .popup button {
+    font-size: 1em;
+    padding: 10px 8px;
+  }
+
+  #wallet button,
+  #return-selection button {
+    font-size: 1em;
+    padding: 10px 10px;
+    margin: 4px;
+  }
+
+  input[type="number"],
+  input,
+  select {
+    width: 90vw;
+    max-width: 220px;
+    font-size: 1em;
+    padding: 8px 4px;
+  }
+
+  #given-notes,
+  #selected-return-notes {
+    font-size: 1em;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #scoreboard {
+    font-size: 0.95em;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Make buttons and inputs fill width on very small screens */
+@media (max-width: 400px) {
+  #wallet button,
+  #return-selection button,
+  .actions button,
+  .popup button {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.95em;
+  }
+
+  input[type="number"],
+  input,
+  select {
+    width: 98vw;
+    max-width: 98vw;
   }
 }
