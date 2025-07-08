@@ -53,19 +53,22 @@
       <input type="number" id="total-input" placeholder="₹ ?" />
     </div>
 
-    <h3>Click notes/coins to pay:</h3>
-    <div id="wallet"></div>
-
-    <div id="given-display">
-      <strong>Given to shopkeeper: ₹<span id="given-amount">0</span></strong>
-      <div id="given-notes"></div>
+    <div id="pay-section">
+      <h3 id="pay-instruction">Click notes/coins to pay:</h3>
+      <div id="wallet"></div>
+      <div id="given-display">
+        <strong>Given to shopkeeper: ₹<span id="given-amount">0</span></strong>
+        <div id="given-notes"></div>
+      </div>
     </div>
 
     <div id="change-question" style="display: none;">
+      <br />
       <div id="shopkeeper-given" style="margin-bottom: 10px;"></div>
       <label id="change-label">How much should the shopkeeper return?</label>
       <input type="number" id="change-input" placeholder="₹ ?" />
       <div id="return-selection" style="margin-top: 10px;"></div>
+      <div id="selected-return-notes" style="margin-top: 10px; font-weight: bold;"></div> <!-- Add this line -->
     </div>
 
     <div class="actions">

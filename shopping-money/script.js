@@ -164,55 +164,97 @@ function setupProducts() {
 }
 
 function setupWalletAndCustomer() {
-  const walletDiv = document.getElementById("wallet");
-  walletDiv.innerHTML = "";
-  let filtered = [];
+    const walletDiv = document.getElementById("wallet");
+    walletDiv.innerHTML = "";
+    let filtered = [];
 
-  if (mode === "shopkeeper") {
-    customerGiven = generateCustomerNotes(correctTotal);
-    filtered = generateWalletForShopkeeper(customerGiven.reduce((a, b) => a + b, 0) - correctTotal);
-    window.correctReturn = getMinimalNotes(customerGiven.reduce((a, b) => a + b, 0) - correctTotal, filtered);
-  } else {
-    const needsReturn = isRandomTrue();
-    filtered = generateWalletForCustomer(correctTotal, needsReturn);
-    window.correctPayment = getMinimalNotes(correctTotal, filtered);
-
-    if (needsReturn) {
-      document.getElementById("change-question").style.display = "block";
-      const paid = window.correctPayment.reduce((a, b) => a + b, 0);
-      window.correctReturn = getMinimalNotes(paid - correctTotal, filtered);
-    } else {
-      document.getElementById("change-question").style.display = "none";
-      window.correctReturn = [];
-    }
-  }
-
-  filtered.forEach(val => {
-    const btn = document.createElement("button");
-    btn.innerText = `₹${val}`;
-    btn.onclick = () => addNote(val);
-    walletDiv.appendChild(btn);
-  });
-
-  if (mode === "shopkeeper") {
-    const count = {};
-    customerGiven.forEach(n => count[n] = (count[n] || 0) + 1);
-    let text = Object.entries(count)
-      .map(([denom, qty]) => `${qty} × ₹${denom}`)
-      .join(", ");
-    document.getElementById("shopkeeper-given").innerText = `Customer gave: ${text}`;
-    document.getElementById("change-question").style.display = "block";
-
+    // UI elements
+    const paySection = document.getElementById("pay-section");
+    const totalQuestion = document.getElementById("total-question");
+    const changeLabel = document.getElementById("change-label");
+    const changeInput = document.getElementById("change-input");
     const returnDiv = document.getElementById("return-selection");
-    denominations.forEach(val => {
-      const btn = document.createElement("button");
-      btn.innerText = `₹${val}`;
-      btn.onclick = () => {
-        returnNotes.push(val);
+    const shopkeeperGivenDiv = document.getElementById("shopkeeper-given");
+    const selectedDiv = document.getElementById("selected-return-notes");
+
+    // Reset selected notes display and visibility
+    if (selectedDiv) {
+        if (mode === "shopkeeper") {
+            selectedDiv.style.display = "block";
+            selectedDiv.innerText = "Select notes to return";
+        } else {
+            selectedDiv.style.display = "none";
+        }
+    }
+
+    if (mode === "shopkeeper") {
+        // Hide payment UI
+        paySection.style.display = "none";
+        totalQuestion.style.display = "none";
+
+        // Generate customer payment and shopkeeper wallet
+        customerGiven = generateCustomerNotes(correctTotal);
+        const customerPaid = customerGiven.reduce((a, b) => a + b, 0);
+        filtered = generateWalletForShopkeeper(customerPaid - correctTotal);
+        window.correctReturn = getMinimalNotes(customerPaid - correctTotal, filtered);
+
+        // Show customer notes
+        if (shopkeeperGivenDiv) {
+            const count = {};
+            customerGiven.forEach(n => count[n] = (count[n] || 0) + 1);
+            shopkeeperGivenDiv.innerText = "Customer gave: " +
+                Object.entries(count)
+                    .map(([denom, qty]) => `${qty} × ₹${denom}`)
+                    .join(", ");
+        }
+
+        // Show return selection, hide label and textbox
+        document.getElementById("change-question").style.display = "block";
+        changeLabel.style.display = "none";
+        changeInput.style.display = "none";
+        returnDiv.style.display = "block";
+        returnDiv.innerHTML = ""; // Clear previous buttons
+
+        // Show only one set of return-selection buttons
+        filtered.forEach(val => {
+            const btn = document.createElement("button");
+            btn.innerText = `₹${val}`;
+            btn.onclick = () => {
+                returnNotes.push(val);
+                updateReturnDisplay();
+            };
+            returnDiv.appendChild(btn);
+        });
+
+        // Reset selected notes display
         updateReturnDisplay();
-      };
-      returnDiv.appendChild(btn);
-    });
+
+    } else {
+      paySection.style.display = "block";
+      totalQuestion.style.display = "block";
+      // Determine if return is needed (e.g., wallet can't make exact payment)
+      const needsReturn = isRandomTrue();
+      if (needsReturn) {
+          document.getElementById("change-question").style.display = "block";
+          changeLabel.style.display = "inline";
+          changeInput.style.display = "inline";
+          returnDiv.style.display = "none";
+      } else {
+          document.getElementById("change-question").style.display = "none";
+          changeLabel.style.display = "inline";
+          changeInput.style.display = "inline";
+          returnDiv.style.display = "none";
+      }
+      filtered = generateWalletForCustomer(correctTotal, needsReturn);
+      window.correctPayment = getMinimalNotes(correctTotal, filtered);
+
+      // Show wallet buttons
+      filtered.forEach(val => {
+          const btn = document.createElement("button");
+          btn.innerText = `₹${val}`;
+          btn.onclick = () => addNote(val);
+          walletDiv.appendChild(btn);
+      });
   }
 }
 
@@ -229,11 +271,26 @@ function updateGivenDisplay() {
 }
 
 function updateReturnDisplay() {
-    const display = returnNotes.map(n => `₹${n}`).join(" + ");
+    const display = returnNotes.length
+        ? returnNotes.map(n => `₹${n}`).join(" + ")
+        : "Select notes to return";
     document.getElementById("change-input").value =
         returnNotes.reduce((a, b) => a + b, 0);
-    document.getElementById("change-label").innerText =
-        "You are returning: " + display;
+
+    const selectedDiv = document.getElementById("selected-return-notes");
+    if (mode === "shopkeeper") {
+        document.getElementById("change-label").innerText =
+            "You are returning: " + display;
+        if (selectedDiv) {
+            selectedDiv.innerText = returnNotes.length
+                ? `Selected notes: ${returnNotes.map(n => `₹${n}`).join(" + ")}`
+                : "Select notes to return";
+        }
+    } else {
+        document.getElementById("change-label").innerText =
+            "How much should the shopkeeper return?";
+        if (selectedDiv) selectedDiv.innerText = "";
+    }
 }
 
 // Refactored: split large `submitAnswer` function into smaller handlers by mode
@@ -243,22 +300,20 @@ function submitAnswer() {
   const givenTotal = givenNotes.reduce((a, b) => a + b, 0);
   const feedback = document.getElementById("feedback");
 
-  if (isNaN(totalInput)) {
-    feedback.innerHTML = "❗ <strong>Enter the total amount.</strong>";
-    return;
-  }
-
-  if (Math.round(totalInput) !== Math.round(correctTotal)) {
-    feedback.innerHTML = `❌ <strong>Total is incorrect.</strong><br/>✅ <strong>Correct total:</strong> ₹${correctTotal.toFixed(2)}`;
-    score.wrong++;
-    updateScore();
-    showNextTimer();
-    return;
-  }
-
   if (mode === "shopkeeper") {
     handleShopkeeperMode();
   } else {
+    if (isNaN(totalInput)) {
+      feedback.innerHTML = "❗ <strong>Enter the total amount.</strong>";
+      return;
+    }
+    if (Math.round(totalInput) !== Math.round(correctTotal)) {
+      feedback.innerHTML = `❌ <strong>Total is incorrect.</strong><br/>✅ <strong>Correct total:</strong> ₹${correctTotal.toFixed(2)}`;
+      score.wrong++;
+      updateScore();
+      showNextTimer();
+      return;
+    }
     handlePlayerMode();
   }
 
@@ -269,13 +324,14 @@ function submitAnswer() {
 function handleShopkeeperMode() {
   const feedback = document.getElementById("feedback");
   const returnTotal = returnNotes.reduce((a, b) => a + b, 0);
-  const expectedTotal = window.correctReturn.reduce((a, b) => a + b, 0);
+  // Calculate the correct return amount (customerGiven total - correctTotal)
+  const expectedTotal = customerGiven.reduce((a, b) => a + b, 0) - correctTotal;
 
   if (returnTotal === expectedTotal) {
-    feedback.innerHTML = "✅ <strong>Correct denominations returned.</strong>";
+    feedback.innerHTML = "✅ <strong>Correct amount returned!</strong>";
     score.correct++;
   } else {
-    feedback.innerHTML = `❌ <strong>You returned:</strong> ₹${returnTotal}, <strong>should have returned:</strong> ₹${expectedTotal}<br/>✅ <strong>Correct return:</strong> ${window.correctReturn.map(n => `₹${n}`).join(" + ")}`;
+    feedback.innerHTML = `❌ <strong>You returned:</strong> ₹${returnTotal}, <strong>should have returned:</strong> ₹${expectedTotal}`;
     score.wrong++;
   }
 }
@@ -325,6 +381,10 @@ function resetRound() {
     document.getElementById("feedback").innerText = "";
     document.getElementById("total-input").value = "";
     document.getElementById("change-input").value = "";
+
+    // Clear selected return notes display
+    const selectedDiv = document.getElementById("selected-return-notes");
+    if (selectedDiv) selectedDiv.innerText = "";
 
     // Add this line for Change Starter total repopulation
     if (mode === "starter") {
@@ -417,5 +477,22 @@ function stopTimer() {
     timerStopped = true;
     clearInterval(countdownTimer);
     document.getElementById("next-timer").style.display = "none";
+}
+
+function generateCustomerNotes(total) {
+    // Only use large denominations
+    const bigDenoms = [500, 200, 100, 50];
+    let paid = 0;
+    let notes = [];
+    // Always overpay by at least 1 note
+    while (paid < total) {
+        // Pick the largest denomination that doesn't exceed (total - paid), or just pick the smallest if overpay is needed
+        let denom = bigDenoms.find(d => d <= (total - paid)) || bigDenoms[bigDenoms.length - 1];
+        notes.push(denom);
+        paid += denom;
+        // If we already overpaid, break
+        if (paid > total) break;
+    }
+    return notes;
 }
 
