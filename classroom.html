@@ -71,7 +71,7 @@
     <p class="info" id="infoMessage" style="display:none;">
       <br><br>
       This class can only be accessed using a Computer (desktop or laptop).<br>
-      Please open this link in a computer browser (like Chrome or Firefox).
+      Please open this link in a computer browser (like Chrome, Firefox or Safari).
     </p>
   </div>
 
@@ -84,17 +84,20 @@
   </div>
 
   <script>
-    const koonchi = "TgXjMvqLrcnAHPZyWEbKDxuFoNisYQ"; // 26 unique lowercase/uppercase letters
+    const koonchi = "TgXjMvqLrcnAHPZyWEbKDxuFoNisYQ";
 
     function encode(meetCode) {
-      const normalized = meetCode.replace(/-/g, '');  // abcdefghij
+      const normalized = meetCode.replace(/-/g, '');
+      if (!/^[a-z]{10}$/.test(normalized)) return null;
       const reversed = normalized.split('').reverse();
       return reversed.map(c => koonchi[c.charCodeAt(0) - 97]).join('');
     }
 
     function decode(code) {
+      if (!/^[A-Za-z]{10}$/.test(code)) return null;
       const reversed = code.split('').map(c => {
         const index = koonchi.indexOf(c);
+        if (index === -1) throw new Error("Invalid encoded character");
         return String.fromCharCode(97 + index);
       }).reverse().join('');
 
@@ -114,11 +117,19 @@
     }
 
     function showAccessPage(encodedId) {
-      const meetCode = decode(encodedId);
+      let meetCode;
+      try {
+        meetCode = decode(encodedId);
+        if (!meetCode) throw new Error();
+      } catch (e) {
+        document.getElementById("status").textContent = "❌ Invalid link code.";
+        return;
+      }
+
       const meetLink = `https://meet.google.com/${meetCode}`;
 
       if (isComputer()) {
-        document.getElementById("status").textContent = "✅ You are on a Computer. Redirecting to class...";
+        document.getElementById("status").textContent = "✅ You are on a computer. Redirecting to class...";
         setTimeout(() => {
           window.location.href = meetLink;
         }, 1000);
@@ -142,10 +153,14 @@
       const output = document.getElementById("output");
 
       if (match && match[1]) {
-        const code = match[1]; // e.g. abc-defg-hij
+        const code = match[1];
         const encoded = encode(code);
+        if (!encoded) {
+          output.innerHTML = `<span style="color:red;">❌ Invalid Meet code format</span>`;
+          return;
+        }
         const link = `${window.location.origin}${window.location.pathname}?id=${encoded}`;
-        output.innerHTML = `✅ Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
+        output.innerHTML = `✅ Share this link:<br><input style="font-size:1.1em;padding:10px;width:90%;max-width:400px;" value="${link}" readonly onclick="this.select();document.execCommand('copy');alert('Copied!')">`;
       } else {
         output.innerHTML = `<span style="color:red;">❌ Invalid Google Meet link</span>`;
       }
