@@ -81,6 +81,10 @@
     <br>
     <button onclick="generate()">Generate Computer-Only Link</button>
     <div id="output"></div>
+    <div id="copySection" style="display:none;">
+      ✅ Share this link:<br>
+      <input id="copyInput" style="font-size:1.1em;padding:10px;width:90%;max-width:400px;" readonly onclick="this.select();document.execCommand('copy');alert('Copied!')">
+    </div>
   </div>
 
   <script>
@@ -149,19 +153,23 @@
 
     function generate() {
       const input = document.getElementById("meetLink").value.trim();
-      const match = input.match(/meet\.google\.com\/([a-z\-]+)/i);
+      const match = input.match(/meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})$/i);
       const output = document.getElementById("output");
 
       if (match && match[1]) {
         const code = match[1];
         const encoded = encode(code);
         if (!encoded) {
+          document.getElementById("copySection").style.display = "none";
           output.innerHTML = `<span style="color:red;">❌ Invalid Meet code format</span>`;
           return;
         }
         const link = `${window.location.origin}${window.location.pathname}?id=${encoded}`;
-        output.innerHTML = `✅ Share this link:<br><input style="font-size:1.1em;padding:10px;width:90%;max-width:400px;" value="${link}" readonly onclick="this.select();document.execCommand('copy');alert('Copied!')">`;
+        document.getElementById("copyInput").value = link;
+        document.getElementById("copySection").style.display = "block";
+        output.innerHTML = "";
       } else {
+        document.getElementById("copySection").style.display = "none";
         output.innerHTML = `<span style="color:red;">❌ Invalid Google Meet link</span>`;
       }
     }
